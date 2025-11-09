@@ -103,7 +103,6 @@ async def list_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     text = "📋 Текущий список пользователей:\n\n"
     for u in users:
-        # Безопасное получение данных
         username = u.get('username', 'без юзернейма')
         nickname = u.get('nickname', 'без ника')
         text += f"@{username} — {nickname}\n"
