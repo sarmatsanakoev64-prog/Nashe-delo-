@@ -178,7 +178,7 @@ async def fix_data(update: Update, context: ContextTypes.DEFAULT_TYPE):
                                  text=f"✅ Файл данных исправлен. Загружено {len(users)} пользователей")
 
 if __name__ == "__main__":
-    app = ApplicationBuilder().token("8308147109:AAEXSt3tk-AZs9WMJzQe2nXj6zxju5XjLqo").build()
+    app = ApplicationBuilder().token("8126569374:AAE6F9JriZCpYMTPKMYqITwMVxmriaF1Ntw").build()
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("add", add_user))
