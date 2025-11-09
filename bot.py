@@ -24,9 +24,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = (
         "Привет! Я бот для управления списком 👋\n\n"
         "Доступные команды:\n"
-        "/add <юзернейм> <ник> — добавить в список\n"
-        "/remove <юзернейм> — удалить из списка\n"
-        "/edit <юзернейм> <новый ник> — изменить ник\n"
+        "/add <имя> <@username> — добавить в список\n"
+        "/remove <@username> — удалить из списка\n"
+        "/edit <@username> <новое имя> — изменить имя\n"
         "/list — показать список\n"
         "/clear — очистить список"
     )
@@ -38,20 +38,20 @@ async def add_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     if len(context.args) < 2:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="Использование: /add <юзернейм> <ник>")
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="Использование: /add <имя> <@username>")
         return
 
-    username = context.args[0]
-    nickname = " ".join(context.args[1:])
+    name = context.args[0]
+    username = context.args[1]
     users = load_users()
 
     if any(u["username"] == username for u in users):
         await context.bot.send_message(chat_id=update.effective_chat.id, text="Такой пользователь уже есть!")
         return
 
-    users.append({"username": username, "nickname": nickname})
+    users.append({"username": username, "name": name})
     save_users(users)
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=f"✅ Пользователь {username} добавлен как {nickname}")
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=f"✅ Добавлен: {name}-{username}")
 
 async def remove_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not await is_admin(update, context):
@@ -59,7 +59,7 @@ async def remove_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     if len(context.args) < 1:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="Использование: /remove <юзернейм>")
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="Использование: /remove <@username>")
         return
 
     username = context.args[0]
@@ -79,18 +79,18 @@ async def edit_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     if len(context.args) < 2:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="Использование: /edit <юзернейм> <новый ник>")
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="Использование: /edit <@username> <новое имя>")
         return
 
     username = context.args[0]
-    new_nick = " ".join(context.args[1:])
+    new_name = context.args[1]
     users = load_users()
 
     for u in users:
         if u["username"] == username:
-            u["nickname"] = new_nick
+            u["name"] = new_name
             save_users(users)
-            await context.bot.send_message(chat_id=update.effective_chat.id, text=f"✏️ Ник {username} изменён на {new_nick}")
+            await context.bot.send_message(chat_id=update.effective_chat.id, text=f"✏️ Изменён: {new_name}-{username}")
             return
 
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Пользователь не найден.")
@@ -101,11 +101,11 @@ async def list_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(chat_id=update.effective_chat.id, text="Список пуст 🕳️")
         return
 
-    text = "📋 Текущий список пользователей:\n\n"
-    for u in users:
-        username = u.get('username', 'без юзернейма')
-        nickname = u.get('nickname', 'без ника')
-        text += f"@{username} — {nickname}\n"
+    text = "📋 Список пользователей:\n\n"
+    for i, u in enumerate(users, 1):
+        username = u.get('username', 'без username')
+        name = u.get('name', 'без имени')
+        text += f"{i}. {name}-{username}\n"
     
     await context.bot.send_message(chat_id=update.effective_chat.id, text=text)
 
@@ -118,7 +118,7 @@ async def clear_list(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(chat_id=update.effective_chat.id, text="🧹 Список успешно очищен!")
 
 if __name__ == "__main__":
-    app = ApplicationBuilder().token("8308147109:AAEXSt3tk-AZs9WMJzQe2nXj6zxju5XjLqo").build()
+    app = ApplicationBuilder().token("8126569374:AAE6F9JriZCpYMTPKMYqITwMVxmriaF1Ntw").build()
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("add", add_user))
