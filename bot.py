@@ -103,7 +103,11 @@ async def list_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     text = "📋 Текущий список пользователей:\n\n"
     for u in users:
-        text += f"@{u['username']} — {u['nickname']}\n"
+        # Безопасное получение данных
+        username = u.get('username', 'без юзернейма')
+        nickname = u.get('nickname', 'без ника')
+        text += f"@{username} — {nickname}\n"
+    
     await context.bot.send_message(chat_id=update.effective_chat.id, text=text)
 
 async def clear_list(update: Update, context: ContextTypes.DEFAULT_TYPE):
